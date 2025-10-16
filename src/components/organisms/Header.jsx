@@ -52,7 +52,7 @@ const handleLogout = async () => {
     setIsMobileMenuOpen(false);
   };
   return (
-    <header className="bg-secondary text-white sticky top-0 z-50 shadow-lg">
+<header className="bg-blue-600 text-white sticky top-0 z-50 shadow-lg">
     <div className="max-w-7xl mx-auto px-4">
         {/* Main Header */}
         <div className="flex items-center justify-between h-16">
