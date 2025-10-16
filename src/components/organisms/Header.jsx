@@ -1,16 +1,16 @@
 import React, { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useDispatch, useSelector } from "react-redux";
-import { logout } from "@/store/authSlice";
+import { useSelector } from "react-redux";
+import { useAuth } from "@/layouts/Root";
 import { toast } from "react-toastify";
 import ApperIcon from "@/components/ApperIcon";
 import Button from "@/components/atoms/Button";
 import Badge from "@/components/atoms/Badge";
 import SearchBar from "@/components/molecules/SearchBar";
-const Header = ({ cartItemCount = 0, compareItemsCount = 0 }) => {
+import Login from "@/components/pages/Login";
+const Header = ({ cartItemCount = 0, compareCount = 0 }) => {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
-  const { isAuthenticated, user } = useSelector((state) => state.auth);
+  const { isAuthenticated, user, logout } = useAuth();
   const [showUserMenu, setShowUserMenu] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
@@ -29,11 +29,14 @@ const Header = ({ cartItemCount = 0, compareItemsCount = 0 }) => {
     navigate("/compare");
   };
 
-  const handleLogout = () => {
-    dispatch(logout());
-    toast.success("Logged out successfully");
-    navigate("/");
-    setShowUserMenu(false);
+const handleLogout = async () => {
+    try {
+      await logout();
+      toast.success("Logged out successfully");
+      setShowUserMenu(false);
+    } catch (error) {
+      toast.error("Logout failed");
+    }
   };
 
   const handleSearch = (query) => {
@@ -72,7 +75,7 @@ const Header = ({ cartItemCount = 0, compareItemsCount = 0 }) => {
             {/* Right Section - Actions */}
             <div className="flex items-center gap-3">
         {/* Auth Section */}
-        {isAuthenticated ? (
+{isAuthenticated ? (
           <div className="relative">
             <button
               onClick={() => setShowUserMenu(!showUserMenu)}
@@ -80,7 +83,7 @@ const Header = ({ cartItemCount = 0, compareItemsCount = 0 }) => {
             >
               <ApperIcon name="User" size={20} className="text-gray-700" />
               <span className="text-sm font-medium text-gray-700 hidden sm:inline">
-                {user?.name || user?.email}
+                {user?.firstName || user?.emailAddress || "User"}
               </span>
               <ApperIcon name="ChevronDown" size={16} className="text-gray-500" />
             </button>
@@ -92,10 +95,10 @@ const Header = ({ cartItemCount = 0, compareItemsCount = 0 }) => {
                   onClick={() => setShowUserMenu(false)}
                 />
                 <div className="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
-                  <div className="px-4 py-2 border-b border-gray-200">
+<div className="px-4 py-2 border-b border-gray-200">
                     <p className="text-xs text-gray-500">Signed in as</p>
                     <p className="text-sm font-medium text-gray-900 truncate">
-                      {user?.email}
+                      {user?.emailAddress || "User"}
                     </p>
                   </div>
                   <button
@@ -135,11 +138,11 @@ const Header = ({ cartItemCount = 0, compareItemsCount = 0 }) => {
           onClick={handleCompareClick}
           className="relative p-2 hover:bg-gray-100 rounded-lg transition-colors"
 aria-label="Compare products"
-        >
+>
           <ApperIcon name="ArrowLeftRight" size={22} className="text-gray-700" />
-          {compareItemsCount > 0 && (
+          {compareCount > 0 && (
             <Badge 
-              content={compareItemsCount > 99 ? "99+" : compareItemsCount}
+              content={compareCount > 99 ? "99+" : compareCount}
               className="absolute -top-1 -right-1"
             />
           )}
@@ -188,10 +191,10 @@ aria-label="Compare products"
         Order History
       </button>
       <button
-        onClick={() => navigate("/compare")}
+onClick={() => navigate("/compare")}
         className="text-sm text-gray-700 hover:text-primary transition-colors font-medium"
       >
-        Compare Products {compareItemsCount > 0 && `(${compareItemsCount})`}
+        Compare Products {compareCount > 0 && `(${compareCount})`}
       </button>
       {categories.slice(0, 5).map(category => (
         <button
@@ -232,13 +235,13 @@ aria-label="Compare products"
         Order History
       </button>
       <button
-        onClick={() => {
+onClick={() => {
           navigate("/compare");
           setIsMobileMenuOpen(false);
         }}
         className="block w-full text-left px-4 py-3 text-sm text-gray-700 hover:bg-gray-100 transition-colors font-medium"
       >
-        Compare Products {compareItemsCount > 0 && `(${compareItemsCount})`}
+        Compare Products {compareCount > 0 && `(${compareCount})`}
       </button>
       {categories.map(category => (
         <button

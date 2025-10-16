@@ -1,15 +1,14 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
 import { useAuth } from "@/layouts/Root";
-import Button from "@/components/atoms/Button";
 
-function Login() {
+function Signup() {
   const { isInitialized } = useAuth();
   
   useEffect(() => {
     if (isInitialized) {
       const { ApperUI } = window.ApperSDK;
-      ApperUI.showLogin("#authentication");
+      ApperUI.showSignup("#authentication");
     }
   }, [isInitialized]);
   
@@ -22,25 +21,25 @@ function Login() {
           </div>
           <div className="flex flex-col gap-1 items-center justify-center">
             <div className="text-center text-lg xl:text-xl font-bold">
-              Sign in to ShopHub
+              Create Account
             </div>
             <div className="text-center text-sm text-gray-500">
-              Welcome back, please sign in to continue
+              Please create an account to continue
             </div>
           </div>
         </div>
         <div id="authentication" />
         <div className="text-center mt-4">
           <p className="text-sm text-surface-600 dark:text-surface-400">
-            Don't have an account?{' '}
-            <Link to="/signup" className="font-medium text-primary hover:text-accent">
-              Sign up
+            Already have an account?{' '}
+            <Link to="/login" className="font-medium text-primary hover:text-accent">
+              Sign in
             </Link>
           </p>
         </div>
       </div>
     </div>
-);
+  );
 }
 
-export default Login;
+export default Signup;
